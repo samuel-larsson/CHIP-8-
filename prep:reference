@@ -1,0 +1,40 @@
+CHIP-8 Emulator
+
+Opcodes:
+  Has 35 opcodes à two bytes:
+    unsigned short opcode;
+
+Memory:
+  Has 4K memory total which will be:
+    unsigned char memory[4096];
+
+  0x000-0x1FF contains the CHIP-8 interpreter. Therefore programs start at 0x200.
+
+Stack:
+  As I can use memory outside the native 4K for call stack, I implement stack and stack pointer:
+    unsigned short stack[16];
+    unsigned short sp;
+
+Registers:
+  Has 16 8-bit (1 byte) CPU registers:
+    unsigned char V[16];
+
+  There is also an Index register I and program counter pc which can have values 0x000-0xFFF
+    unsigned short I;
+    unsigned short pc;
+
+Graphics:
+  Has one instruction that draws sprite to screen.
+  2048 pixels (64x32) monochrome screen. Easily implemented by turning pixels
+  in an array on or off (1 or 0).
+  Therefore:
+  unsigned char gfx[64*32];
+
+Timers:
+  Has two timer registers that count at 60 Hz.
+    unsigned char delay_timer;
+    unsigned char sound_timer;
+
+Keypad:
+  CHIP-8 has HEX based keypad 0x0-0xF, 16 buttons. Therefore:
+    unsigned char key[16];
