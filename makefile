@@ -1,3 +1,5 @@
+all: main clean
+
 #Link commands
 main: main.o chip8functions.o
 	g++ -o main main.o chip8functions.o
@@ -8,4 +10,5 @@ main.o: main.cpp chip8.h
 chip8functions.o: chip8functions.cpp chip8.h
 	g++ -c chip8functions.cpp
 
-clean: rm *.o
+clean:
+	rm *.o main
