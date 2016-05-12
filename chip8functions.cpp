@@ -82,7 +82,52 @@ void chip8::emulateCycle(){
       }
       break;
 
-      //CONTINUE HERE
+    case 0x5000:    //0x5XY0 Skips next intr. if VX == VY
+      if(V[opcode & 0x0F00] == V[opcode & 0x00F0]){
+        pc += 4;
+      } else {
+        pc += 2;
+      }
+      break;
+
+    case 0x6000:    //0x6XNN Loads NN to VX
+      V[opcode & 0x0F00] = opcode & 0x00FF;
+      pc += 2;
+      break;
+
+    case 0x7000:    //0x7XNN Loads NN+VX to VX
+      V[opcode & 0x0F00] += opcode & 0x00FF;
+      pc += 2;
+      break;
+
+    case 0x8000:    //0x8XYN has 9 different branches depending on last 4 bits
+      switch(opcode & 0x000F){
+
+        case 0x0000: //0x8XY0 Move VY to VX
+          V[opcode & 0x0F00] = V[opcode & 0x00F0];
+          pc += 2;
+          break;
+
+        case 0x0001: //0x8XY1 Set VX to (VX OR VY)
+          V[opcode & 0x0F00] = V[opcode & 0x00F0] | V[opcode & 0x0F00];
+          pc += 2;
+          break;
+
+        case 0x0002: //0x8XY2 Set VX to (VX AND VY)
+          V[opcode & 0x0F00] = V[opcode & 0x00F0] & V[opcode & 0x0F00];
+          pc += 2;
+          break;
+
+        case 0x0003: //0x8XY3 Set VX to (VX XOR VY)
+          V[opcode & 0x0F00] = V[opcode & 0x00F0] ^ V[opcode & 0x0F00];
+          pc += 2;
+          break;
+
+          //CONTINUE HERE
+
+      }
+      break;
+
     case 0xA000:    //0xANNN: Sets I to the address NNN
       I = opcode & 0x0FFF;
       pc += 2;
