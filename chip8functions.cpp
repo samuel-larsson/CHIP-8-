@@ -52,6 +52,7 @@ void chip8::emulateCycle(){
 
         default:
           std::cout << "Unknown opcode [0x0000]: 0x" << opcode << "\n";
+          break;
       }
       break;
 
@@ -66,7 +67,7 @@ void chip8::emulateCycle(){
       break;
 
     case 0x3000:    //0x3XNN  Skips next instruction if VX == NN
-      if(V[opcode & 0x0F00] == (opcode & 0x00FF)){
+      if(V[(opcode & 0x0F00) >> 8] == (opcode & 0x00FF)){
         pc += 4;
       }
       else {
@@ -75,7 +76,7 @@ void chip8::emulateCycle(){
       break;
 
     case 0x4000:    //0x4XNN Skips next instruction if VX != NN
-      if(V[opcode & 0x0F00] != (opcode & 0x00FF)){
+      if(V[(opcode & 0x0F00) >> 8] != (opcode & 0x00FF)){
         pc += 4;
       } else {
         pc += 2;
@@ -83,7 +84,7 @@ void chip8::emulateCycle(){
       break;
 
     case 0x5000:    //0x5XY0 Skips next intr. if VX == VY
-      if(V[opcode & 0x0F00] == V[opcode & 0x00F0]){
+      if(V[(opcode & 0x0F00) >> 8] == V[(opcode & 0x00F0) >> 4]){
         pc += 4;
       } else {
         pc += 2;
@@ -91,12 +92,12 @@ void chip8::emulateCycle(){
       break;
 
     case 0x6000:    //0x6XNN Loads NN to VX
-      V[opcode & 0x0F00] = opcode & 0x00FF;
+      V[(opcode & 0x0F00) >> 8] = opcode & 0x00FF;
       pc += 2;
       break;
 
     case 0x7000:    //0x7XNN Loads NN+VX to VX
-      V[opcode & 0x0F00] += opcode & 0x00FF;
+      V[(opcode & 0x0F00) >> 8] += opcode & 0x00FF;
       pc += 2;
       break;
 
@@ -104,26 +105,51 @@ void chip8::emulateCycle(){
       switch(opcode & 0x000F){
 
         case 0x0000: //0x8XY0 Move VY to VX
-          V[opcode & 0x0F00] = V[opcode & 0x00F0];
+          V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x00F0) >> 4];
           pc += 2;
           break;
 
         case 0x0001: //0x8XY1 Set VX to (VX OR VY)
-          V[opcode & 0x0F00] = V[opcode & 0x00F0] | V[opcode & 0x0F00];
+          V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x00F0) >> 4] | V[(opcode & 0x0F00) >> 8];
           pc += 2;
           break;
 
         case 0x0002: //0x8XY2 Set VX to (VX AND VY)
-          V[opcode & 0x0F00] = V[opcode & 0x00F0] & V[opcode & 0x0F00];
+          V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x00F0) >> 4] & V[(opcode & 0x0F00) >> 8];
           pc += 2;
           break;
 
         case 0x0003: //0x8XY3 Set VX to (VX XOR VY)
-          V[opcode & 0x0F00] = V[opcode & 0x00F0] ^ V[opcode & 0x0F00];
+          V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x00F0) >> 4] ^ V[(opcode & 0x0F00) >> 8];
           pc += 2;
           break;
 
+        case 0x0004: //0x8XY4 Set VX = VX + VY, VF = carry
+          if(V[(opcode & 0x00F0) >> 4] > (0xFF - V[(opcode & 0x0F00) >> 8])){
+            V[0xF] = 1;
+          } else {
+            V[0xF] = 0;
+          }
+          V[(opcode & 0x0F00) >> 8] += V[opcode & 0x00F0 >> 4];
+          pc += 2;
+          break;
+
+        case 0x0005: //0x8XY5 Set VX = VX - VY, VF = NOT borrow
+          if(V[(opcode & 0x0F00) >> 8] > V[(opcode & 0x00F0) >> 4]){
+            V[0xF] = 1;
+          }
+          else {
+            V[0xF] = 0;
+          }
+          V[(opcode & 0x0F00) >> 8] -= V[(opcode & 0x00F0) >> 4];
+          break;
+
+          
           //CONTINUE HERE
+
+        default:
+          std::cout << "Unknown opcode [0x8000]: 0x" << opcode << "\n";
+          break;
 
       }
       break;
@@ -135,6 +161,7 @@ void chip8::emulateCycle(){
 
     default:
       std::cout << "Unknown opcode: 0x" << opcode << "\n";
+      break;
   }
 
   //Update timers
