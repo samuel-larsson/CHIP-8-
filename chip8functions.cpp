@@ -103,7 +103,6 @@ void chip8::emulateCycle(){
 
     case 0x8000:    //0x8XYN has 9 different branches depending on last 4 bits
       switch(opcode & 0x000F){
-
         case 0x0000: //0x8XY0 Move VY to VX
           V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x00F0) >> 4];
           pc += 2;
@@ -142,21 +141,106 @@ void chip8::emulateCycle(){
             V[0xF] = 0;
           }
           V[(opcode & 0x0F00) >> 8] -= V[(opcode & 0x00F0) >> 4];
+          pc += 2;
           break;
 
-          
-          //CONTINUE HERE
+        case 0x0006:  //0x8XY6 Set VX = VX SHR 1
+          if((V[(opcode & 0x0F00) >> 8] & 1) == 1){
+            V[0xF] = 1;
+          } else {
+            V[0xF] = 0;
+          }
+          V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x0F00) >> 8] / 2;
+          pc += 2;
+          break;
+
+        case 0x0007:  //0x8XY7 Set VX = VY - VX, VF = NOT borrow
+          if(V[(opcode & 0x00F0) >> 4] > V[(opcode & 0x0F00) >> 8]){
+            V[0xF] = 1;
+          } else {
+            V[0xF] = 0;
+          }
+          V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x00F0) >> 4] - V[(opcode & 0x0F00) >> 8];
+          pc += 2;
+          break;
+
+        case 0x000E:  //0x8XYE Set VX = VX SHL 1
+          if((V[(opcode & 0x0F00) >> 8] & 8) == 1){
+            V[0xF] = 1;
+          } else {
+            V[0xF] = 0;
+          }
+          V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x0F00) >> 8] * 2;
+          pc += 2;
+          break;
 
         default:
           std::cout << "Unknown opcode [0x8000]: 0x" << opcode << "\n";
           break;
-
       }
       break;
 
-    case 0xA000:    //0xANNN: Sets I to the address NNN
+    case 0x9000:  //0x9XY0 Skip next instruction if VX != VY
+      if(V[(opcode & 0x0F00) >> 8] != V[(opcode & 0x00F0) >> 4]){
+        pc += 4;
+      } else {
+        pc += 2;
+      }
+      break;
+
+    case 0xA000:  //0xANNN: Sets I to the address NNN
       I = opcode & 0x0FFF;
       pc += 2;
+      break;
+
+    case 0xB000:  //0xBNNN Jump to adress NNN + V0
+      pc = (opcode & 0x0FFF) + V[0];
+      break;
+
+    case 0xC000:  //0xCXKK Set VX = random byte AND KK
+      V[(opcode & 0x0F00) >> 8] = (rand() % 256) & (opcode & 0x00FF);
+      pc += 2;
+      break;
+
+    case 0xD000:{ //0xDXYN Display N-byte sprite starting at memory location I at (VX, VY), set VF = collision
+      //Get (x,y)-position of sprite
+      unsigned short x = V[(opcode & 0x0F00) >> 8];
+      unsigned short y = V[(opcode & 0x00F0) >> 4];
+      unsigned short height = opcode & 0x000F;
+      unsigned short pixel;
+
+      V[0xF] = 0;
+      //FINISH THIS LAST
+      pc += 2;
+      break;
+    }
+
+    case 0xE000:
+      switch (opcode & 0x000F){
+        case 0x000E:  //0xEX9E Skip next instr. if key with the value of VX is pressed.
+        //FINISH THIS FOR KEYBOARD INPUT
+        pc += 4;
+        break;
+
+        case 0x0001:  //0xEXA1 Skip next instr. if key with the value of VX is NOT pressed.
+        //FINISH THIS FOR KEYBOARD INPUT
+        pc += 4;
+        break;
+
+        default:
+          std::cout << "Unknown opcode [0xE000]: 0x" << opcode << "\n";
+          break;
+      }
+      break;
+
+    case 0xF000:
+      switch(opcode & 0x00FF){
+        //FINISH ALL THE F-OPCODES LATER
+
+        default:
+          std::cout << "Unknown opcode [0xF000]: 0x" << opcode << "\n";
+          break;
+      }
       break;
 
     default:
