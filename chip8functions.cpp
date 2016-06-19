@@ -202,7 +202,7 @@ void chip8::emulateCycle(){
       pc += 2;
       break;
 
-    case 0xD000:{ //0xDXYN Display N-byte sprite starting at memory location I at (VX, VY), set VF = collision
+    case 0xD000:{ //0xDXYN Display N-pixel rows high sprite starting at memory location I at (VX, VY), set VF = collision
       //Get (x,y)-position of sprite
       unsigned short x = V[(opcode & 0x0F00) >> 8];
       unsigned short y = V[(opcode & 0x00F0) >> 4];
@@ -210,7 +210,18 @@ void chip8::emulateCycle(){
       unsigned short pixel;
 
       V[0xF] = 0;
-      //FINISH THIS LAST
+      for(int yline = 0; yline < height; yline++){  //loop over each row
+        pixel = memory[I + yline];                  //fetch pixel values from memory (1 or 0)
+        for(int xline = 0; xline <  8; xline++){
+          if((pixel & (0x80 >> xline)) != 0){         //scan through all 8 evaluated pixel, checking if 1 or 0
+            if(gfx[x + xline + (y + yline)*64] == 1){
+              V[0xF] = 1;
+            }
+            gfx[x + xline + (y + yline)*64] ^= 1;     //set pixel value
+          }
+        }
+      }
+      drawFlag = true;  //update screen
       pc += 2;
       break;
     }
