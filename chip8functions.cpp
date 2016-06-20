@@ -227,15 +227,21 @@ void chip8::emulateCycle(){
     }
 
     case 0xE000:
-      switch (opcode & 0x000F){
-        case 0x000E:  //0xEX9E Skip next instr. if key with the value of VX is pressed.
-        //FINISH THIS FOR KEYBOARD INPUT
-        pc += 4;
+      switch (opcode & 0x00FF){
+        case 0x009E:  //0xEX9E Skip next instr. if key with the value of VX is pressed.
+          if(key[V[(opcode & 0x0F00) >> 8]] != 0){
+            pc += 4;
+          } else {
+            pc += 2;
+          }
         break;
 
-        case 0x0001:  //0xEXA1 Skip next instr. if key with the value of VX is NOT pressed.
-        //FINISH THIS FOR KEYBOARD INPUT
-        pc += 4;
+        case 0x00A1:  //0xEXA1 Skip next instr. if key with the value of VX is NOT pressed.
+          if(key[V[(opcode & 0x0F00) >> 8]] == 0){
+            pc += 4;
+          } else {
+            pc += 2;
+          }
         break;
 
         default:
@@ -246,6 +252,18 @@ void chip8::emulateCycle(){
 
     case 0xF000:
       switch(opcode & 0x00FF){
+        case 0x0007:  //0xFX07 Set VX = delay timer value
+          V[(opcode & 0x0F00) >> 8] = delay_timer;
+          pc += 2;
+          break;
+
+        case 0x000A:  //0xFX0A Wait for a key press, store value of key in VX
+          //FINISH LATER
+          break;
+
+        case 0x0015:  //0xFX15 Set delay timer = value of VX
+          delay_timer = V[(opcode & 0x0F00) >> 8] ;
+          break;
         //FINISH ALL THE F-OPCODES LATER
 
         default:
