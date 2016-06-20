@@ -1,10 +1,15 @@
 #include "chip8.h"
 #include <iostream>
-#include <SDL2/SDL.h>
+
 chip8 CHIP8;
 
 int main(int argc, char* argv[]){
   std::cout << "Hello! This is the start of the show.\n";
+
+  if(video_init() == false){
+    std::cout << "Could not initialize video: " << SDL_GetError() << std::endl;
+    return 1;
+  }
 
   CHIP8.initialize();
 
@@ -23,5 +28,7 @@ int main(int argc, char* argv[]){
   for(int i = 0; i < bufferSize; i++){
     CHIP8.memory[512 + i] = buffer[i];
   }
+
+  SDL_Quit();
 
 }

@@ -1,3 +1,6 @@
+#include </sw/include/SDL2/SDL.h>
+
+bool video_init();
 
 struct chip8{
   //CPU

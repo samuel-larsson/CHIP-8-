@@ -1,6 +1,5 @@
 #include "chip8.h"
 #include <iostream>
-#include <SDL2/SDL.h>
 
 void chip8::initialize(){
   pc = 0x200;   //PC starts at 0x200
