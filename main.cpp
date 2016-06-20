@@ -1,8 +1,9 @@
 #include "chip8.h"
 #include <iostream>
+#include <SDL2/SDL.h>
 chip8 CHIP8;
 
-int main(){
+int main(int argc, char* argv[]){
   std::cout << "Hello! This is the start of the show.\n";
 
   CHIP8.initialize();

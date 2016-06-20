@@ -1,5 +1,6 @@
 #include "chip8.h"
 #include <iostream>
+#include <SDL2/SDL.h>
 
 void chip8::initialize(){
   pc = 0x200;   //PC starts at 0x200
@@ -221,7 +222,7 @@ void chip8::emulateCycle(){
           }
         }
       }
-      drawFlag = true;  //update screen
+      //drawFlag = true;  //update screen
       pc += 2;
       break;
     }
