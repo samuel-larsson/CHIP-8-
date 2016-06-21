@@ -1,10 +1,9 @@
 # CHIpp-8
 
-###### Simple CHIP-8 emulator written in C++
 
 
-**Description**: Just a small experimental project for educational purposes. 
-Written in C++ and using [SDL2](http://www.libsdl.org/) for I/O.
+
+**Description**: Simple CHIP-8 emulator written in C++, using [SDL2](http://www.libsdl.org/) for I/O. Just a small experimental project for educational purposes.
 
 #### Dependencies:
 
