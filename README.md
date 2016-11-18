@@ -3,7 +3,7 @@
 
 
 
-**Description**: Simple CHIP-8 emulator written in C++, using [SDL2](http://www.libsdl.org/) for I/O. Just a small experimental project for educational purposes. Only developed and tested in macOS Sierra so far.
+**Description**: Simple CHIP-8 emulator written in C++, using [SDL2](http://www.libsdl.org/) for I/O. Just a small experimental project for educational purposes. Only tested in macOS Sierra so far.
 
 #### Dependencies:
 
