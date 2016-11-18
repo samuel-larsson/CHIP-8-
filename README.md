@@ -11,6 +11,7 @@
 * SDL_Mixer
 
 #### How to compile:
+macOS:
 ```
 Makefile is included in root folder, so just navigate to the root folder of the project and run the makefile.
 ```
